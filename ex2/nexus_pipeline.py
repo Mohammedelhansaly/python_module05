@@ -77,13 +77,10 @@ class TransformStage:
 class OutputStage:
     """Stage 3: Output formatting and delivery"""
     def process(self, data: Any) -> Any:
-        # Stage 3: output formatting
         return data
 
 
-# ============================================================
 # ProcessingPipeline (ABC) -> manages stages and data flow
-# ============================================================
 class ProcessingPipeline(ABC):
     """Abstract base class for data processing pipelines."""
     def __init__(self, pipeline_id: str) -> None:
@@ -124,7 +121,6 @@ class ProcessingPipeline(ABC):
             self.total_errors += 1
             raise StageError(f"Error detected in Stage: "
                              f"{type(e).__name__}: {e}") from e
-
         finally:
             end = time.time()
             self.last_time_sec = end - start
@@ -151,9 +147,7 @@ class ProcessingPipeline(ABC):
         ...
 
 
-# ============================================================
 # Adapters (inherit from ProcessingPipeline + override process)
-# ============================================================
 class JSONAdapter(ProcessingPipeline):
     """Adapter for processing JSON data."""
     def __init__(self, pipeline_id: str) -> None:
@@ -303,7 +297,7 @@ def build_pipeline(adapter: ProcessingPipeline) -> None:
 
 def main() -> None:
     """Main function to demonstrate the Nexus Pipeline System."""
-    print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===")
+    print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===\n")
     print("Initializing Nexus Manager...")
     manager = NexusManager()
     print(f"Pipeline capacity: {manager.capacity} streams/second")
@@ -325,7 +319,7 @@ def main() -> None:
     manager.register_pipeline(csv_pipeline)
     manager.register_pipeline(stream_pipeline)
 
-    print("=== Multi-Format Data Processing ===")
+    print("\n=== Multi-Format Data Processing ===\n")
 
     # JSON demo
     print("Processing JSON data through pipeline...")
@@ -333,7 +327,7 @@ def main() -> None:
     print(f"Input: {json_input}")
     print("Transform: Enriched with metadata and validation")
     json_output = manager.process_pipeline(json_pipeline, json_input)
-    print(f"Output: {json_output}")
+    print(f"Output: {json_output}\n")
 
     # CSV demo
     print("Processing CSV data through same pipeline...")
@@ -341,7 +335,7 @@ def main() -> None:
     print(f'Input: "{csv_input}"')
     print("Transform: Parsed and structured data")
     csv_output = manager.process_pipeline(csv_pipeline, csv_input)
-    print(f"Output: {csv_output}")
+    print(f"Output: {csv_output}\n")
 
     # Stream demo
     print("Processing Stream data through same pipeline...")
@@ -349,7 +343,7 @@ def main() -> None:
     print(f"Input: {stream_input}")
     print("Transform: Aggregated and filtered")
     stream_output = manager.process_pipeline(stream_pipeline, stream_input)
-    print(f"Output: {stream_output}")
+    print(f"Output: {stream_output}\n")
 
     # Pipeline chaining demo
     print("=== Pipeline Chaining Demo ===")
@@ -360,7 +354,7 @@ def main() -> None:
     chain_input = '{"sensor": "temp", "value": 30.0, "unit": "C"}'
     manager.chain_pipelines([json_pipeline], chain_input)
 
-    print("Chain result: 100 records processed through 3-stage pipeline")
+    print("\nChain result: 100 records processed through 3-stage pipeline")
 
     # Performance stats
     json_pipeline.get_stats()
@@ -370,12 +364,12 @@ def main() -> None:
           f" {total_time}s total processing time")
 
     # Error recovery test
-    print("=== Error Recovery Test ===")
+    print("\n=== Error Recovery Test ===")
     print("Simulating pipeline failure...")
     bad_json = '{"sensor": "temp", "value": 23.5, "unit": "C"'  # missing }
     _ = manager.process_pipeline(json_pipeline, bad_json)
 
-    print("Nexus Integration complete. All systems operational.")
+    print("\nNexus Integration complete. All systems operational.")
 
 
 if __name__ == "__main__":

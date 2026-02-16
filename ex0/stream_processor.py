@@ -5,16 +5,16 @@ from typing import Any, List, Dict
 class DataProcessor(ABC):
     """Abstract base class for data processors."""
     @abstractmethod
-    def process(self, data):
+    def process(self, data: Any) -> str:
         """Process the input data and return the result."""
         pass
 
     @abstractmethod
-    def validate(self, data):
+    def validate(self, data: Any) -> bool:
         """Validate the input data format."""
         pass
 
-    def format_output(self, data):
+    def format_output(self, result: str) -> str:
         """ Format the processed data for output."""
         pass
 
@@ -39,7 +39,7 @@ class NumericProcessor(DataProcessor):
 
     def format_output(self, result: str) -> str:
         """ Format the processed numeric data for output. """
-        return f"Output: {result}"
+        return f"{result}"
 
 
 class TextProcessor(DataProcessor):
@@ -58,7 +58,7 @@ class TextProcessor(DataProcessor):
 
     def format_output(self, result: str) -> str:
         """ Format the processed text data for output. """
-        return f"Output: {result}"
+        return f"{result}"
 
 
 class LogProcessor(DataProcessor):
@@ -72,11 +72,11 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Log entry verification failed")
         level, msg = data.split(":", 1)
-        return f"[{level.strip().upper()}] level detected:{msg}"
+        return f"[{level.strip()}] level detected:{msg}"
 
     def format_output(self, result: str) -> str:
         """ Format the processed log data for output. """
-        return f"Output: {result}"
+        return f"{result}"
 
 
 def main() -> None:
@@ -89,7 +89,7 @@ def main() -> None:
         {"name": "Text Processor", "proc": TextProcessor(),
          "data": "Hello Nexus World"},
         {"name": "Log Processor", "proc": LogProcessor(),
-         "data": "ALERT: Connection timeout"}
+         "data": "ERROR: Connection timeout"}
     ]
 
     for entry in datasets:
@@ -104,7 +104,7 @@ def main() -> None:
             if processor.validate(data):
                 print(f"Validation: {name.split()[0]} data verified")
                 result = processor.process(data)
-                print(processor.format_output(result))
+                print(f"Output : {processor.format_output(result)}")
             else:
                 print("Validation: Failed")
         except Exception as e:
@@ -112,6 +112,17 @@ def main() -> None:
         print()
 
     print("=== Polymorphic Processing Demo ===")
+    print("\nProcessing multiple data types through same interface...")
+    processors: list[DataProcessor] = [
+        NumericProcessor(),
+        TextProcessor(),
+        LogProcessor()
+    ]
+    multydata = [[1, 2, 3], "hello world", "INFO : system ready"]
+    for processor, data in zip(processors, multydata):
+        if processor.validate(data):
+            result = processor.process(data)
+            print(f"Result : {processor.format_output(result)}")
 
 
 if __name__ == "__main__":

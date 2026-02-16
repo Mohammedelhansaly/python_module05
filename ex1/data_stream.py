@@ -145,7 +145,7 @@ class TransactionStream(DataStream):
                     sell_total += amount
                     processed += 1
 
-            net_flow = sell_total - buy_total
+            net_flow = buy_total - sell_total
             self.total_processed += processed
             self.last_batch_size = len(data_batch)
 
@@ -230,12 +230,14 @@ class StreamProcessor:
     def process_all(self, batches: Dict[str, List[Any]]) -> None:
         print("=== Polymorphic Stream Processing ===")
         print("Processing mixed stream types through unified interface...\n")
+        print("Batch 1 Results:")
 
         for stream in self.streams:
             try:
                 batch = batches.get(stream.stream_id, [])
                 result = stream.process_batch(batch)
-                print(f"- {stream.stream_id}: {result}")
+                print(f"- {stream.stream_id.lower().split("_")[0].title()} "
+                      f"data: {result.split(",")[0].split(":")[1]}")
             except StreamError as e:
                 print(f"- {stream.stream_id}: ERROR -> {e}")
             except Exception as e:
@@ -281,7 +283,6 @@ def main() -> None:
         "TRANS_001": ["buy:10", "sell:200", "buy:50", "sell:5"],
         "EVENT_001": ["login", "error", "error"],
     }
-
     processor.process_all(batches)
 
     print("Stream filtering active: High-priority data only")
